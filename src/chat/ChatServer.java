@@ -9,7 +9,7 @@ import java.net.Socket;
 
 public class ChatServer {
 
-	private static final String IP = "192.168.1.33";
+	private static final String IP = "192.168.107.1";
 	private static final int PORT = 8000;
 	
 	public static void main(String[] args) {

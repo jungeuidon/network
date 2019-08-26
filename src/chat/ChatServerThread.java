@@ -39,7 +39,7 @@ public class ChatServerThread extends Thread{
 	public void run() {
 		String request = null;
 			try {
-				List<Writer> listWriters;
+				
 
 				//1. 외부 클라이언트 정보
 				InetSocketAddress inetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
@@ -61,9 +61,18 @@ public class ChatServerThread extends Thread{
 					
 					//4. 프로토콜 분석
 					String[] tokens = request.split(":");
+					System.out.println("request  : " + request );
+					System.out.println("-------------");
+					System.out.println("[0]" + tokens[0]);
+					System.out.println("-------------");
+					System.out.println("[1]" + tokens[1]);
+					System.out.println("-------------");
+					System.out.println("[2]" + tokens[2]);
+					System.out.println("-------------");
 					
 					if("join".equals(tokens[0])) {
 						doJoin(tokens[1], printWriter);
+						System.out.println("쪼인");
 					} else if ("message".equals(tokens[0])) {
 						doMessage(tokens[1]);
 					} else if ("quit".equals(tokens[0])) {

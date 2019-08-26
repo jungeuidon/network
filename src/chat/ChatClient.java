@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class ChatClient {
 
@@ -29,7 +30,8 @@ public class ChatClient {
 			
 			//3. 연결
 			String hostAddress = InetAddress.getLocalHost().getHostAddress();
-			socket.connect(new InetSocketAddress(hostAddress, PORT));
+//			System.out.println("클라이언트 연결");
+			socket.connect(new InetSocketAddress("192.168.107.1", PORT));
 			
 			//4. reader/writer 생성
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
@@ -38,19 +40,35 @@ public class ChatClient {
 			//5. join 프로토콜
 			System.out.print("닉네임>>");
 			String nickname =sc.nextLine();
-			System.out.println("클라이언트 ");
+//			System.out.println("클라이언트 ");
 			pw.println("join:" + nickname);
 			pw.flush();
-			
 			
 			//6. ChatClientThread 시작
 			Thread thread = new ChatClientThread(socket);
 //			System.out.println("클라이언트 스레드시작");
 			thread.start();
 			
+			while(true) {
+//				br.readLine();
+				System.out.println("도도");
+				System.out.println(">>");
+				String input = sc.nextLine();
+				if( "quit".equals(input) == true) {
+					//8. quit 프로토콜 처리
+					break;
+				} else {
+					//9. 메시지 처리
+					
+					if(input.equals("")==false) {
+						pw.write("message:" +input);
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
+		} finally { // 10.자원정리
 			try {
 				if(socket != null && socket.isClosed() ==false) {
 					socket.close();
