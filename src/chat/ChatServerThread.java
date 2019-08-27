@@ -24,11 +24,12 @@ public class ChatServerThread extends Thread{
 	List<Writer> listWriters = new ArrayList<Writer>();
 	BufferedReader bufferedReader = null;
 	PrintWriter printWriter = null;
-	ServerSocket serverSocket = null;
 	
-	public ChatServerThread(Socket socket) {
-		this.socket = socket;
-	}
+//	ServerSocket serverSocket = null;
+	
+//	public ChatServerThread(Socket socket) {
+//		this.socket = socket;
+//	}
 	
 	public ChatServerThread(Socket socket, List<Writer> listWriters) {
 		this.socket = socket;
@@ -37,43 +38,45 @@ public class ChatServerThread extends Thread{
 	
 	@Override
 	public void run() {
+		
 		String request = null;
+		//1. 외부 클라이언트 정보
+		InetSocketAddress inetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+		log("connected from " + inetSocketAddress.getAddress().getHostAddress() + ":"
+				+ inetSocketAddress.getPort());
 			try {
-				
-
-				//1. 외부 클라이언트 정보
-				InetSocketAddress inetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
-				log("connected from " + inetSocketAddress.getAddress().getHostAddress() + ":"
-						+ inetSocketAddress.getPort());
-				
 				//2. 스트림
-				bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-				printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-				request = bufferedReader.readLine();
+				bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+				printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
 				
 				//3. 요청처리
 				while(true) {
+					request = bufferedReader.readLine();
 					if(request ==null) {
 						log("클라이언트로 부터 연결 끊김");
 						doQuit(printWriter);
 						break;
 					}
+					if(nickname !=null) {
+						System.out.println(nickname + ":" + request);
+					}
 					
 					//4. 프로토콜 분석
 					String[] tokens = request.split(":");
-					System.out.println("request  : " + request );
-					System.out.println("-------------");
-					System.out.println("[0]" + tokens[0]);
-					System.out.println("-------------");
-					System.out.println("[1]" + tokens[1]);
-					System.out.println("-------------");
-					System.out.println("[2]" + tokens[2]);
-					System.out.println("-------------");
+//					System.out.println("request : " + request );
+//					System.out.println("-------------");
+//					System.out.println("[0]" + tokens[0]);
+//					System.out.println("-------------");
+//					System.out.println("[1]" + tokens[1]);
+//					System.out.println("-------------");
+//					System.out.println("[2]" + tokens[2]);
+//					System.out.println("-------------");
 					
 					if("join".equals(tokens[0])) {
+						System.out.println("조인이다임마");
 						doJoin(tokens[1], printWriter);
-						System.out.println("쪼인");
 					} else if ("message".equals(tokens[0])) {
+						System.out.println("message !!!");
 						doMessage(tokens[1]);
 					} else if ("quit".equals(tokens[0])) {
 						doQuit(printWriter);
@@ -110,6 +113,8 @@ public class ChatServerThread extends Thread{
 		this.nickname = nickName;
 		
 		String data = nickName + "님이 참여하였습니다.";
+		
+		System.out.println("ServerTh doJoin : " + data);
 		broadcast(data);
 		
 		//writer pool에 저장
@@ -117,14 +122,16 @@ public class ChatServerThread extends Thread{
 		
 		
 		//ack 
-		printWriter.println("join:ok");
+		printWriter.println("채팅방에 성공적으로 입장하였습니다.");
 		printWriter.flush();
 		
 	}
 	
 	private void doMessage(String message) {
 		//구현
-		 String data = "messaage:" + message;
+		
+		 String data = nickname + ":" + message;
+		 System.out.println("ServerTh doMessage : " + data);
 		 broadcast(data);
 	}
 	
@@ -150,7 +157,6 @@ public class ChatServerThread extends Thread{
 	
 	private void broadcast(String data) {
 		synchronized(listWriters) {
-			
 			for(Writer writer : listWriters) {
 				PrintWriter printWriter = (PrintWriter)writer;
 				printWriter.println(data);

@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 
@@ -24,22 +25,19 @@ public class ChatClientThread extends Thread {
 		
 		try {
 			
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			
 			
 			while(true) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-				PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
-				
 				String line = br.readLine();
-				if(line.equals(null)) {
+				if(line==null) {
 					break;
 				}
-				pw.write(line);
-				
+				System.out.println(line);
 
 			}
 			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,6 +46,7 @@ public class ChatClientThread extends Thread {
 				if(socket != null && socket.isClosed()==false) {
 					socket.close();
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

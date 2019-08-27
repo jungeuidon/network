@@ -1,20 +1,25 @@
 package chat;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ChatServer {
 
-	private static final String IP = "192.168.107.1";
+//	private static final String IP = "127.0.0.1";  //자신의 IP
 	private static final int PORT = 8000;
 	
 	public static void main(String[] args) {
 		
-		
+		List<Writer> listPrintWriter = new ArrayList<Writer>();
 		ServerSocket serverSocket = null;
 		
 		try {
@@ -22,18 +27,20 @@ public class ChatServer {
 			serverSocket = new ServerSocket();
 			
 			//2. 바인딩
-//			String hostAddress = InetAddress.getLocalHost().getHostAddress();
-			serverSocket.bind(new InetSocketAddress(IP, PORT));
-			log( "연결 기다림 " + IP + ":" + PORT);
+			String hostAddress = InetAddress.getLocalHost().getHostAddress();
+			serverSocket.bind(new InetSocketAddress(hostAddress, PORT));
+			log( "연결 기다림 " + hostAddress + ":" + PORT);
 			
 			
 			//3. 요청대기
 			while(true) {
 				Socket socket = serverSocket.accept();
-				new ChatServerThread(socket).start();
+				new ChatServerThread(socket, listPrintWriter).start();
 			}
 			
 			
+		} catch (SocketException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
