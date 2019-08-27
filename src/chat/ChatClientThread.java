@@ -26,19 +26,20 @@ public class ChatClientThread extends Thread {
 		try {
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-			
+
 			
 			while(true) {
 				String line = br.readLine();
-				if(line==null) {
-					break;
+				if(line!=null) {
+					System.out.println(line);
+				} else {
+					break;					
 				}
-				System.out.println(line);
 
 			}
 			
 		} catch (SocketException e) {
-			e.printStackTrace();
+			System.out.println("채팅방을 종료하였습니다.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

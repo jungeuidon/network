@@ -87,7 +87,9 @@ public class ChatServerThread extends Thread{
 				}
 				
 				
-			} catch (IOException e) {
+			}catch (SocketException e) {
+				e.printStackTrace();
+			}catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("서버 에러IO");
 			} finally {

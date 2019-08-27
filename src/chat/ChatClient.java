@@ -52,9 +52,10 @@ public class ChatClient {
 				String input = sc.nextLine();
 				
 				//8. quit 프로토콜 처리
-				if( "quit".equals(input) == true) {
+				if( "quit".equals(input)) {
 					break;
 				}
+				
 				//9. 메시지 처리
 					pw.println("message:" +input);
 					pw.flush();
@@ -62,7 +63,7 @@ public class ChatClient {
 			}
 			
 		} catch (SocketException e) {
-			e.printStackTrace();
+			System.out.println("Closed Socket");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally { // 10.자원정리
