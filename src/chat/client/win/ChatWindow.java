@@ -13,23 +13,28 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.Socket;
 
-public class ChatWindow {
+public class ChatWindow implements Runnable{
 
 	private Frame frame;
 	private Panel pannel;
 	private Button buttonSend;
 	private TextField textField;
 	private TextArea textArea;
-
-	public ChatWindow(String name) {
+	Socket socket;
+	
+	public ChatWindow(Socket socket, String name) {
 		frame = new Frame(name);
 		pannel = new Panel();
 		buttonSend = new Button("Send");
 		textField = new TextField();
 		textArea = new TextArea(30, 80);
 	}
-
+	
+	
+	
+	
 	public void show() {
 		// Button
 		buttonSend.setBackground(Color.GRAY);
@@ -89,4 +94,5 @@ public class ChatWindow {
 		textField.setText("");
 		textField.requestFocus();
 	}
+	
 }
